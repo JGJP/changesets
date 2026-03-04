@@ -58,25 +58,54 @@ const defaultChangelogFunctions: ChangelogFunctions = {
 export default defaultChangelogFunctions;
 ```
 
+### `getReleaseLine`
+
+Called once per changeset per package. It receives:
+
 ```ts
-type getReleaseLine(
-    changeset: {
-        // This is the string of the summary from the changeset markdown file
-        summary: string
-        // This is an array of information about what is going to be released. each is an object with name: the name of the package, and type, which is "major", "minor", or "patch"
-        releases
-        // the hash for the commit that introduced the changeset
-        commit
-    },
-    // the type of the change this changeset refers to, as "major", "minor", or "patch"
-    type
-    // This needs to be explained - see @changesets/changelog-github's code for how this works
-    changelogOpts
-) => string
+type getReleaseLine = (
+  changeset: {
+    // The summary text from the changeset markdown file
+    summary: string;
+    // The hash for the commit that introduced the changeset (if available)
+    commit: string | undefined;
+    // The unique id of the changeset
+    id: string;
+  },
+  // The bump type this changeset applies to the current package: "major", "minor", or "patch"
+  type: VersionType,
+  // The options object from your config (see "Adding Options" below), or null if none provided
+  changelogOpts: Record<string, any> | null
+) => Promise<string>;
 ```
 
-TODO - this guide is incomplete. Until it is completed, you may need to dig into the code for some of our existing
+### `getDependencyReleaseLine`
+
+Called once per package when its dependencies are updated. It receives:
+
+```ts
+type getDependencyReleaseLine = (
+  // All changesets that caused the dependency updates
+  changesets: NewChangesetWithCommit[],
+  // The dependencies that were updated, with their new versions
+  dependenciesUpdated: { name: string; newVersion: string }[],
+  // The options object from your config, or null if none provided
+  changelogOpts: Record<string, any> | null
+) => Promise<string>;
+```
+
+Both functions should return a string (the formatted changelog entry), or an empty string to produce no output.
 
 ## Adding Options to Changelog Functions
 
-TODO
+You can pass options to your changelog functions by using an array in your `.changeset/config.json` instead of a plain string:
+
+```json
+{
+  "changelog": ["@changesets/changelog-github", { "repo": "org/repo" }]
+}
+```
+
+The second element of the array is passed as the `changelogOpts` parameter to both `getReleaseLine` and `getDependencyReleaseLine`. You can use this to pass any configuration your changelog generator needs — API tokens, repo URLs, formatting preferences, etc.
+
+For a complete example of how options are used, see the source of [`@changesets/changelog-github`](https://github.com/changesets/changesets/tree/main/packages/changelog-github).

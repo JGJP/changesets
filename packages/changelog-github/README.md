@@ -7,7 +7,7 @@ When you use this package, your changelogs will include links to the relevant PR
 ## Installation
 
 ```bash
-npm install @changesets/changelog-github
+yarn add @changesets/changelog-github
 ```
 
 ## Configuration

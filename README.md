@@ -53,6 +53,7 @@ To make releasing easier, you can use [this changesets github action](https://gi
 - [Fixed packages](./docs/fixed-packages.md)
 - [Linked packages](./docs/linked-packages.md)
 - [Modifying changelog format](./docs/modifying-changelog-format.md)
+- [@changesets/changelog-github](./packages/changelog-github/README.md) — GitHub-linked changelog generator
 - [Prereleases](./docs/prereleases.md)
 - [Problems publishing in monorepos](./docs/problems-publishing-in-monorepos.md)
 - [Snapshot releases](./docs/snapshot-releases.md)
